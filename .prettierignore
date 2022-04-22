@@ -1,0 +1,10 @@
+public
+node_modules
+dist
+build
+vendor
+wp
+*.css
+*.lock
+*.md
+package-lock.json

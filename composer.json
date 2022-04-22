@@ -1,0 +1,112 @@
+{
+	"name": "dekode/project-base",
+	"description": "Dekode WordPress boilerplate with modern development tools, easier configuration, and an improved folder structure",
+	"license": "GPL-3.0-or-later",
+	"config": {
+		"sort-packages": true,
+		"allow-plugins": {
+			"composer/installers": true,
+			"boxuk/wp-muplugin-loader": true,
+			"inpsyde/wp-translation-downloader": true,
+			"johnpbloch/wordpress-core-installer": true,
+			"dealerdirect/phpcodesniffer-composer-installer": true
+		}
+	},
+	"prefer-stable": true,
+	"minimum-stability": "dev",
+	"repositories": {
+		"mu-plugins": {
+			"type": "path",
+			"url": "packages/mu-plugins/*",
+			"options": {
+				"symlink": true
+			}
+		},
+		"plugins": {
+			"type": "path",
+			"url": "packages/plugins/*",
+			"options": {
+				"symlink": true
+			}
+		},
+		"themes": {
+			"type": "path",
+			"url": "packages/themes/*",
+			"options": {
+				"symlink": true
+			}
+		},
+		"wpackagist": {
+			"type": "composer",
+			"url": "https://wpackagist.org"
+		},
+		"dekode-packages": {
+			"type": "composer",
+			"url": "https://packages.dekodes.no"
+		},
+		"t2-packages": {
+			"type": "composer",
+			"url": "https://t2-packages.teft.io"
+		}
+	},
+	"require": {
+		"php": ">=7.4",
+		"boxuk/wp-muplugin-loader": "~2.0.0",
+		"composer/installers": "~1.12.0",
+		"dekode/dekode-theme": "~1.0.0",
+		"inpsyde/wp-translation-downloader": "~2.0.2",
+		"johnpbloch/wordpress": "~5.9.3",
+		"symfony/dotenv": "~5.4.2",
+		"t2/t2": "~1.0.0",
+		"wpackagist-plugin/imagify": "~1.10.0",
+		"wpackagist-plugin/spinupwp": "~1.4.0",
+		"wpackagist-plugin/two-factor": "~0.7.1"
+	},
+	"require-dev": {
+		"dekode/coding-standards": "4.0.0",
+		"wp-cli/i18n-command": "2.3.0",
+		"dekode/logging": "@dev"
+	},
+	"extra": {
+		"wordpress-install-dir": "public/wp",
+		"installer-paths": {
+			"public/content/mu-plugins/{$name}/": [
+				"type:wordpress-muplugin"
+			],
+			"public/content/plugins/{$name}/": [
+				"type:wordpress-plugin"
+			],
+			"public/content/themes/{$name}/": [
+				"type:wordpress-theme"
+			]
+		},
+		"wp-translation-downloader": {
+			"auto-run": false,
+			"languages": [
+				"nb_NO"
+			],
+			"directory": "public/content/languages"
+		}
+	},
+	"scripts": {
+		"post-install-cmd": [
+			"cp public/content/plugins/spinupwp/drop-ins/object-cache.php public/content/object-cache.php",
+			"cp -r packages/translations/* public/content/languages/"
+		],
+		"lint": [
+			"./vendor/bin/phpcs ."
+		],
+		"build": [
+			"@composer install"
+		],
+		"build-translations": [
+			"@composer wp-translation-downloader:download"
+		],
+		"build-for-deploy": [
+			"@composer install --no-dev && composer wp-translation-downloader:download"
+		],
+		"make-pot": [
+			"./vendor/bin/wp i18n make-pot . languages/project-base.pot --exclude=\".github,plugins,public/content/plugins,vendor,public/wp,node_modules,tests\" --slug=project-base"
+		]
+	}
+}
